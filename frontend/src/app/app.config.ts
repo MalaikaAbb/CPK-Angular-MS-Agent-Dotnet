@@ -12,6 +12,7 @@ import {
 import { z } from 'zod';
 
 import { routes } from './app.routes';
+import { catalog } from './features/a2ui/a2ui-catalog';
 // import { MyFallback } from './features/surfaces/my-fallback.component';
 // import { shopUI } from './features/surfaces/shop-ui';
 
@@ -37,10 +38,10 @@ const setDashboardFilter: SandboxFunction<{ filter: string }> = {
  * Framework agent directly. The `HttpAgent` binding that reaches the Agent
  * Framework AG-UI endpoint lives server-side in frontend/server.ts.
  *
- * `a2ui.recovery` and `openGenerativeUI.sandboxFunctions` are the A2UI and
- * generative-UI guide options. No `a2ui.catalog` is set yet — supplying one is
- * what actually registers the render_a2ui renderer, so A2UI stays inert until
- * a catalog is added. See README known issues.
+ * `a2ui.catalog` / `a2ui.recovery` and `openGenerativeUI.sandboxFunctions` are
+ * the A2UI and generative-UI guide options. The catalog is the A2UI guide's
+ * "Use existing web components" one; supplying a catalog is what registers the
+ * render_a2ui renderer.
  */
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -58,6 +59,11 @@ export const appConfig: ApplicationConfig = {
       // auth : send cookies to a cross-origin runtime end
       // a2ui : recover incomplete streams start
       a2ui: {
+        // The guide's app.config sample passes `catalog: productCatalog`,
+        // which it never defines. The one catalog it does build is the
+        // "Use existing web components" one (features/a2ui/a2ui-catalog.ts),
+        // so that is the catalog passed here.
+        catalog,
         recovery: { showAfterMs: 2_000, showAfterAttempts: 2 },
       },
       // a2ui : recover incomplete streams end

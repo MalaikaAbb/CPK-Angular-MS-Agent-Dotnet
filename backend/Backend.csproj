@@ -9,8 +9,9 @@
   Differences from the showcase project:
   - Only the files this harness uses are compiled (EnableDefaultCompileItems
     is off and each file is listed).
-  - The showcase's ..\_shared\dotnet\ sources live in shared/ here; their
-    contents are unchanged.
+  - The showcase's ..\_shared\dotnet\LunaChatClientExtensions.cs lives in
+    shared/ here, unchanged. Its CVDIAG sources and the showcase's aimock /
+    ApiKeyResolver helpers are left out (see CLAUDE.md, "Showcase-only code").
 -->
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
@@ -26,16 +27,9 @@
   <ItemGroup>
     <!-- Self-defined host. -->
     <Compile Include="Program.cs" />
-    <!-- Showcase, unchanged. -->
+    <!-- Showcase (SubagentsAgent.cs: only its OpenAIClient setup changed). -->
     <Compile Include="SubagentsAgent.cs" />
-    <Compile Include="ApiKeyResolver.cs" />
-    <Compile Include="AimockHeaderPolicy.cs" />
-    <Compile Include="AimockHeaderContext.cs" />
-    <Compile Include="CvDiag.cs" />
-    <Compile Include="CvdiagBackend.cs" />
     <Compile Include="shared\LunaChatClientExtensions.cs" />
-    <Compile Include="shared\CvdiagSchema.cs" />
-    <Compile Include="shared\CvdiagEmitter.cs" />
   </ItemGroup>
 
   <ItemGroup>

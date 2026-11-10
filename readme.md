@@ -54,9 +54,8 @@ ms-agent-dotnet/
 ├── backend/                    # .NET / Microsoft Agent Framework
 │   ├── Backend.csproj          # Showcase package pins (net9.0, RollForward Major)
 │   ├── Program.cs              # Self-defined host: default agent, MapAGUI endpoints
-│   ├── SubagentsAgent.cs       # Showcase, unchanged — what the Sub-Agents guide quotes
-│   ├── ApiKeyResolver.cs …     # Showcase helpers SubagentsAgent.cs depends on, unchanged
-│   └── shared/                 # Showcase _shared/dotnet sources, unchanged
+│   ├── SubagentsAgent.cs       # Showcase — what the Sub-Agents guide quotes (one marked deviation)
+│   └── shared/                 # Showcase _shared/dotnet/LunaChatClientExtensions.cs, unchanged
 ├── autorecorder/               # Portable screen-recording suite (config/ + actions/ adapted)
 └── frontend/                   # Angular 22 Application + Node Runtime
     ├── server.ts               # Copilot Runtime server (Node.js, Port 8240)
@@ -99,7 +98,7 @@ Every route is defined once in [nav-config.ts](frontend/src/app/lib/nav-config.t
 Only the Sub-Agents page contains any C#; every other page is Angular/TypeScript and byte-identical to the ms-agent-python page. Gaps were filled from the CopilotKit showcase (`showcase/integrations/ms-agent-dotnet/`), never invented, and each is labelled on its route:
 
 - **Quickstart backend step** — published as `<!-- setup skipped: agent-setup is not bundled for ms-agent-dotnet -->`. [backend/Program.cs](backend/Program.cs) is therefore self-defined, from the showcase's `Program.cs` building blocks.
-- **Sub-Agents** — both C# snippets stop mid-`CreateAgent()` and call `ApiKeyResolver`, `AimockHeaderPolicy` and `AsLunaChatClient()`, which the page never defines. The full showcase file and those helpers are copied unchanged. The code hard-codes the model `gpt-6-luna`, and `ApiKeyResolver` defaults the endpoint to GitHub Models — kept as published.
+- **Sub-Agents** — both C# snippets stop mid-`CreateAgent()` and call `ApiKeyResolver`, `AimockHeaderPolicy` and `AsLunaChatClient()`, which the page never defines. The full showcase file and `LunaChatClientExtensions.cs` are copied. `ApiKeyResolver` and `AimockHeaderPolicy` are showcase test plumbing and are left out ([CLAUDE.md](CLAUDE.md), "Showcase-only code"); the constructor reads `OPENAI_API_KEY` / `OPENAI_BASE_URL` from configuration instead, marked `HARNESS DEVIATION`. The hard-coded model `gpt-6-luna` is kept as published.
 - **`getWeather`** — the tools guide renders a server tool it never shows; the .NET tool mirrors the Python harness's self-defined `getWeather(location)`.
 
 ---
@@ -110,7 +109,7 @@ Only the Sub-Agents page contains any C#; every other page is Angular/TypeScript
 
 ```bash
 cd backend
-cp .env.example .env    # set OPENAI_API_KEY (and keep OPENAI_BASE_URL for OpenAI)
+cp .env.example .env    # set OPENAI_API_KEY (OPENAI_BASE_URL is optional)
 dotnet run
 # Runs on http://localhost:8241  (GET /health)
 ```

@@ -399,9 +399,8 @@ jobs:
         shard: [1, 2, 3]
 
     env:
-      # backend/Program.cs resolves key and endpoint through the showcase's
-      # ApiKeyResolver: OPENAI_API_KEY, and OPENAI_BASE_URL (which otherwise
-      # defaults to GitHub Models). The default agent's model is an env var;
+      # backend/Program.cs and SubagentsAgent.cs read OPENAI_API_KEY and an
+      # optional OPENAI_BASE_URL. The default agent's model is an env var;
       # the sub-agents supervisor hard-codes gpt-6-luna.
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
       OPENAI_BASE_URL: ${{ vars.OPENAI_BASE_URL || 'https://api.openai.com/v1' }}

@@ -31,7 +31,7 @@ import { Callout, Panel, SourceCode, TryIt } from '../components/ui';
           The guide's "Setting up sub-agents" and "Exposing sub-agents as
           tools" code is one file, <code>agent/SubagentsAgent.cs</code>, shown
           twice and cut off both times mid-<code>CreateAgent()</code>. Here it is
-          whole, copied unchanged from the showcase. Each delegation tool
+          whole, from the showcase, with one marked deviation (below). Each delegation tool
           appends a <code>running</code> entry to the
           <code>SubagentsStore</code>, runs a single-shot chat call with the
           sub-agent's prompt, and marks the entry <code>completed</code> or
@@ -73,34 +73,41 @@ import { Callout, Panel, SourceCode, TryIt } from '../components/ui';
       </ui-panel>
 
       <ui-callout title="As published — the guide's C# is not self-contained">
-        Kept verbatim, not fixed. Both snippets stop inside
-        <code>CreateAgent()</code>, before the supervisor agent is built or
-        returned. The factory's constructor calls
+        Both snippets stop inside <code>CreateAgent()</code>, before the
+        supervisor agent is built or returned. The factory's constructor calls
         <code>ApiKeyResolver.ResolveApiKey</code> and
         <code>AimockHeaderPolicy.CreateOpenAIClientOptions</code>, and
         <code>CreateAgent()</code> calls <code>.AsLunaChatClient()</code> — none
         of the three is defined on the page. Both the supervisor and every
-        sub-agent are hard-wired to the model <code>gpt-6-luna</code>.
-        <code>ApiKeyResolver</code> defaults the endpoint to GitHub Models
-        (<code>https://models.inference.ai.azure.com</code>), not OpenAI, so an
-        OpenAI key also needs <code>OPENAI_BASE_URL</code> set.
+        sub-agent are hard-wired to the model <code>gpt-6-luna</code>, kept as
+        published.
+      </ui-callout>
+
+      <ui-callout title="Deviation — showcase-only helpers left out">
+        <code>ApiKeyResolver</code> and <code>AimockHeaderPolicy</code> are the
+        showcase's own test plumbing: key resolution with a GitHub Models
+        default endpoint, and header forwarding to CopilotKit's mock LLM server
+        (which drags in its CVDIAG diagnostics). The feature does not need them,
+        so they are not copied. The constructor's two calls to them are replaced
+        by plain configuration reads of <code>OPENAI_API_KEY</code> and an
+        optional <code>OPENAI_BASE_URL</code>, marked
+        <code>HARNESS DEVIATION</code> in <code>SubagentsAgent.cs</code> with the
+        published lines quoted beside them. Everything else in the file is
+        unchanged.
       </ui-callout>
 
       <ui-callout title="Not in the guide — taken from the showcase source">
         The rest of <code>SubagentsAgentFactory</code>
-        (<code>SupervisorPrompt</code>, the supervisor <code>ChatClientAgent</code> it
-        wraps in <code>SubagentsAgent</code>, <code>DelegateAsync</code>) is the showcase file the guide
-        quotes, <code>showcase/integrations/ms-agent-dotnet/agent/SubagentsAgent.cs</code>,
-        copied unchanged. So are its helpers — <code>ApiKeyResolver.cs</code>,
-        <code>AimockHeaderPolicy.cs</code> and what it pulls in
-        (<code>AimockHeaderContext.cs</code>, <code>CvDiag.cs</code>,
-        <code>CvdiagBackend.cs</code>), and <code>_shared/dotnet/</code>'s
-        <code>LunaChatClientExtensions.cs</code>, <code>CvdiagSchema.cs</code>
-        and <code>CvdiagEmitter.cs</code> (in <code>backend/shared/</code>). The
-        package pins come from the showcase's <code>ProverbsAgent.csproj</code>:
-        the guide's <code>AgentThread</code> / <code>AgentRunResponse</code>
-        overrides only compile against
-        <code>Microsoft.Agents.AI.Hosting.AGUI.AspNetCore</code>
+        (<code>SupervisorPrompt</code>, the supervisor <code>ChatClientAgent</code>
+        it wraps in <code>SubagentsAgent</code>, <code>DelegateAsync</code>) is
+        the showcase file the guide quotes,
+        <code>showcase/integrations/ms-agent-dotnet/agent/SubagentsAgent.cs</code>.
+        <code>.AsLunaChatClient()</code> is the showcase's
+        <code>_shared/dotnet/LunaChatClientExtensions.cs</code>, unchanged (in
+        <code>backend/shared/</code>). The package pins come from the
+        showcase's <code>ProverbsAgent.csproj</code>: the guide's
+        <code>AgentThread</code> / <code>AgentRunResponse</code> overrides only
+        compile against <code>Microsoft.Agents.AI.Hosting.AGUI.AspNetCore</code>
         <code>1.0.0-preview.251110.1</code>. On the frontend the guide does not
         show <code>readDelegations</code>, <code>subAgentRendererConfig</code>,
         or either card component; they are the sub-agent half of the Angular

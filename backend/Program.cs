@@ -7,12 +7,13 @@
 // that answers the runtime's HttpAgents, built from the same pieces as the
 // CopilotKit showcase's showcase/integrations/ms-agent-dotnet/agent/Program.cs
 // (`AddAGUI`, `MapAGUI`, `ChatClientAgent`, the same package pins), minus the
-// showcase's aimock / CVDIAG test plumbing.
+// showcase's own test plumbing (ApiKeyResolver, aimock header forwarding,
+// CVDIAG diagnostics) — see CLAUDE.md, "Showcase-only code".
 //
 // Endpoints (each one an AG-UI agent streaming over SSE):
 //   POST /           the `default` (and `support`) agent
 //   POST /subagents  the Sub-Agents supervisor, SubagentsAgent.cs, from the
-//                    showcase unchanged
+//                    showcase (only its OpenAIClient setup changed)
 //   GET  /health     liveness, for the frontend's backend-health check
 //
 // Mirrors ../ms-agent-py/backend/main.py, the Python harness's equivalent.
@@ -47,17 +48,18 @@ var loggerFactory = app.Services.GetRequiredService<ILoggerFactory>();
 var logger = loggerFactory.CreateLogger("Program");
 var jsonOptions = app.Services.GetRequiredService<IOptions<JsonOptions>>().Value.SerializerOptions;
 
-// Same key/endpoint resolution as the showcase (ApiKeyResolver.cs, copied
-// unchanged), so this agent and the sub-agents supervisor — whose factory
-// resolves its own client through ApiKeyResolver — hit the same upstream.
-var endpoint = ApiKeyResolver.ResolveEndpoint(builder.Configuration);
-var apiKey = ApiKeyResolver.ResolveApiKey(builder.Configuration, logger);
+// OPENAI_API_KEY is required; OPENAI_BASE_URL is optional (the OpenAI SDK's
+// default endpoint otherwise). The sub-agents factory reads the same two keys.
+var apiKey = builder.Configuration["OPENAI_API_KEY"]
+    ?? throw new InvalidOperationException("OPENAI_API_KEY is not set.");
+var endpoint = builder.Configuration["OPENAI_BASE_URL"];
 var model = Environment.GetEnvironmentVariable("OPENAI_CHAT_MODEL_ID") ?? "gpt-5.4-mini";
-logger.LogInformation("OpenAI endpoint {Endpoint}, default-agent model {Model}", endpoint, model);
+logger.LogInformation("OpenAI endpoint {Endpoint}, default-agent model {Model}",
+    string.IsNullOrWhiteSpace(endpoint) ? "(OpenAI default)" : endpoint, model);
 
-var openAiClient = new OpenAIClient(
-    new ApiKeyCredential(apiKey),
-    new OpenAIClientOptions { Endpoint = new Uri(endpoint) });
+var openAiClient = string.IsNullOrWhiteSpace(endpoint)
+    ? new OpenAIClient(new ApiKeyCredential(apiKey))
+    : new OpenAIClient(new ApiKeyCredential(apiKey), new OpenAIClientOptions { Endpoint = new Uri(endpoint) });
 
 // frontend tools : server tool getWeather start
 [Description("Get the weather for a location.")]

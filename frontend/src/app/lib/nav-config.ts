@@ -87,7 +87,7 @@ export const NAV: NavGroup[] = [
         docPath: '/angular/ms-agent-dotnet/quickstart',
         summary:
           'The smallest end-to-end path: an HttpAgent in Copilot Runtime pointed at the .NET Agent Framework endpoint, provideCopilotKit, and one copilot-chat.',
-        status: 'unverified',
+        status: 'working',
         statusNote:
           'The guide ships no backend for this framework ("agent-setup is not bundled for ms-agent-dotnet"), so backend/Program.cs is self-defined.',
       },
@@ -103,7 +103,7 @@ export const NAV: NavGroup[] = [
         docPath: '/angular/ms-agent-dotnet/guides/chat-ui',
         summary:
           'The four chat surfaces, a replaced assistant-message component, and scoped chat CSS.',
-        status: 'unverified',
+        status: 'working',
       },
       {
         path: '/frontend-tools-generative-ui',
@@ -112,7 +112,7 @@ export const NAV: NavGroup[] = [
         docPath: '/angular/ms-agent-dotnet/guides/frontend-tools-generative-ui',
         summary:
           'A server-side tool call rendered by an Angular component, a browser-executed tool, the display-only registerComponent path, and sandboxed Open Generative UI.',
-        status: 'unverified',
+        status: 'working',
         statusNote:
           'The guide never shows the server side of getWeather; backend/Program.cs declares a self-defined getWeather(location), while the guide’s renderer reads args.city.',
       },
@@ -123,9 +123,9 @@ export const NAV: NavGroup[] = [
         docPath: '/angular/ms-agent-dotnet/guides/a2ui',
         summary:
           'Declarative generative UI driven by the runtime A2UI middleware, with the guide’s recovery thresholds and catalog CSS.',
-        status: 'unverified',
+        status: 'broken',
         statusNote:
-          'Supplying a2ui.catalog is what registers the render_a2ui renderer, and the guide’s catalog snippet is not self-contained (see the route page).',
+          'The catalog registered is the guide’s createAngularCatalog one from “Use existing web components” (Panel + the acme-badge Custom Element). It only type-checks with zod 3, which the guide never states; the schema-strategy snippets remain not self-contained.',
       },
       {
         path: '/voice-multimodal',
@@ -145,7 +145,7 @@ export const NAV: NavGroup[] = [
         docPath: '/angular/ms-agent-dotnet/guides/human-in-the-loop',
         summary:
           'A decision tool that pauses the run until the user answers, plus a headless interrupt controller.',
-        status: 'unverified',
+        status: 'working',
         statusNote:
           'The interrupt panel stays idle unless the agent emits an AG-UI interrupt; the default .NET agent emits none.',
       },
@@ -156,7 +156,7 @@ export const NAV: NavGroup[] = [
         docPath: '/angular/ms-agent-dotnet/guides/shared-state',
         summary:
           'Reading and writing agent state through injectAgentStore, and publishing read-only app context two ways.',
-        status: 'unverified',
+        status: 'broken',
         statusNote:
           'The guide shows no agent-side code; the default agent declares no state, so the workspace panel sits on its defaults.',
       },
@@ -167,7 +167,7 @@ export const NAV: NavGroup[] = [
         docPath: '/angular/ms-agent-dotnet/webmcp',
         summary:
           'A frontend tool opted into WebMCP with webmcp: { annotations }, so the same handler serves the CopilotKit agent and browser agents via document.modelContext.',
-        status: 'partial',
+        status: 'working',
         statusNote:
           'WebMCP is experimental: browser agents can only discover the tool in Chrome 149+ with the origin trial or chrome://flags/#enable-webmcp-testing. Elsewhere CopilotKit registers nothing, and only the chat path runs.',
       },
@@ -207,7 +207,7 @@ export const NAV: NavGroup[] = [
         docPath: '/angular/ms-agent-dotnet/guides/threads-memory-attachments-headless',
         summary:
           'An AttachmentsConfig bound to copilot-chat, with the file picker, drag-and-drop, and paste.',
-        status: 'unverified',
+        status: 'broken',
       },
       {
         path: '/headless',
@@ -216,7 +216,7 @@ export const NAV: NavGroup[] = [
         docPath: '/angular/ms-agent-dotnet/guides/threads-memory-attachments-headless',
         summary:
           'A transcript and composer built from scratch on injectAgentStore and CopilotKitCore.runAgent.',
-        status: 'unverified',
+        status: 'working',
       },
     ],
   },
@@ -230,7 +230,7 @@ export const NAV: NavGroup[] = [
         docPath: '/angular/ms-agent-dotnet/auth',
         summary:
           'A runtime gated by an onRequest hook, session headers set through updateRuntime, a forwardHeaders allowlist, and credentialed CORS.',
-        status: 'unverified',
+        status: 'working',
       },
     ],
   },
@@ -244,7 +244,7 @@ export const NAV: NavGroup[] = [
         docPath: '/angular/ms-agent-dotnet/multi-agent/subagents',
         summary:
           'A supervisor delegating to research, writing, and critique sub-agents, with a live delegation log driven by shared state.',
-        status: 'unverified',
+        status: 'working',
         statusNote:
           'The guide’s C# compiles as published against the showcase’s package pins, but it is cut off mid-CreateAgent() and hard-codes the model gpt-6-luna; the rest comes from the showcase file it quotes.',
       },

@@ -1,3 +1,9 @@
+// Copied from the CopilotKit showcase,
+// showcase/integrations/ms-agent-dotnet/agent/SubagentsAgent.cs — the file
+// https://docs.copilotkit.ai/angular/ms-agent-dotnet/multi-agent/subagents
+// quotes — unchanged except for the SubagentsAgentFactory constructor's
+// OpenAIClient setup (marked HARNESS DEVIATION below), which drops the
+// showcase-only ApiKeyResolver / AimockHeaderPolicy helpers.
 // @region[supervisor-delegation-tools]
 // @region[subagent-setup]
 using System.ComponentModel;
@@ -347,12 +353,27 @@ public sealed class SubagentsAgentFactory
         _logger = loggerFactory.CreateLogger<SubagentsAgentFactory>();
         _jsonSerializerOptions = jsonSerializerOptions;
 
-        var apiKey = ApiKeyResolver.ResolveApiKey(configuration);
-
-        var endpoint = ApiKeyResolver.ResolveEndpoint(configuration);
-        _openAiClient = new(
-            new ApiKeyCredential(apiKey),
-            AimockHeaderPolicy.CreateOpenAIClientOptions(endpoint));
+        // HARNESS DEVIATION from the guide / showcase. The published code is:
+        //
+        //     var apiKey = ApiKeyResolver.ResolveApiKey(configuration);
+        //
+        //     var endpoint = ApiKeyResolver.ResolveEndpoint(configuration);
+        //     _openAiClient = new(
+        //         new ApiKeyCredential(apiKey),
+        //         AimockHeaderPolicy.CreateOpenAIClientOptions(endpoint));
+        //
+        // ApiKeyResolver and AimockHeaderPolicy are CopilotKit showcase test
+        // plumbing (aimock header forwarding, CVDIAG diagnostics, a GitHub
+        // Models default endpoint), never defined by the guide and not needed
+        // for the feature, so they are left out. The same key and optional
+        // endpoint are read straight from configuration (which includes
+        // environment variables) instead.
+        var apiKey = configuration["OPENAI_API_KEY"]
+            ?? throw new InvalidOperationException("OPENAI_API_KEY is not set.");
+        var endpoint = configuration["OPENAI_BASE_URL"];
+        _openAiClient = string.IsNullOrWhiteSpace(endpoint)
+            ? new(new ApiKeyCredential(apiKey))
+            : new(new ApiKeyCredential(apiKey), new OpenAIClientOptions { Endpoint = new Uri(endpoint) });
     }
 
     public AIAgent CreateAgent()
